@@ -1,0 +1,6 @@
+agent-framework-devui>=1.0.0b260107
+agent-framework>=1.0.0b260107
+openai>=1.0.0
+azure-identity
+python-dotenv
+agent-framework-azure-ai

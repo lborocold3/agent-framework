@@ -15,8 +15,8 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent / ".env")
 
 from agent_framework import ChatAgent
-from agent_framework.azure import AzureAIAgentClient
-from azure.identity.aio import DefaultAzureCredential
+from agent_framework.azure import AzureAIClient
+from azure.identity import DefaultAzureCredential
 from pydantic import Field
 
 
@@ -45,14 +45,13 @@ def get_forecast(
     return f"Weather forecast for {location}:\n" + "\n".join(forecast)
 
 
-# Agent instance following Agent Framework conventions
-agent = ChatAgent(
+# Agent instance following Agent Framework conventions (v2 API)
+agent = AzureAIClient(
+    project_endpoint=os.environ.get("AZURE_AI_PROJECT_ENDPOINT"),
+    model_deployment_name=os.environ.get("FOUNDRY_MODEL_DEPLOYMENT_NAME"),
+    credential=DefaultAzureCredential(),
+).create_agent(
     name="FoundryWeatherAgent",
-    chat_client=AzureAIAgentClient(
-        project_endpoint=os.environ.get("AZURE_AI_PROJECT_ENDPOINT"),
-        model_deployment_name=os.environ.get("FOUNDRY_MODEL_DEPLOYMENT_NAME"),
-        credential=DefaultAzureCredential(),
-    ),
     instructions="""
     You are a weather assistant using Azure AI Foundry models. You can provide
     current weather information and forecasts for any location. Always be helpful

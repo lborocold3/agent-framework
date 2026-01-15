@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  devui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:8080:8080"  # Directory discovery mode - accessible from network
+      - "0.0.0.0:8090:8090"  # In-memory mode - accessible from network
+    environment:
+      # Azure AI Foundry configuration
+      AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
+      FOUNDRY_MODEL_DEPLOYMENT_NAME: ${FOUNDRY_MODEL_DEPLOYMENT_NAME}
+      
+      # Azure Identity will use DefaultAzureCredential
+      # Supports: environment variables, managed identity, Azure CLI, etc.
+    volumes:
+      # Mount .env file if available
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    # For Azure authentication with CLI credentials, you may need:
+    # - To mount Azure credentials
+    # - Or use managed identity if running in Azure
+    
+    # Uncomment to run in-memory mode instead:
+    # command: python in_memory_mode.py
